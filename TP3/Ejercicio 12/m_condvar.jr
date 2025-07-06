@@ -1,4 +1,23 @@
-
+/* the JR class for monitor condition variables.
+ *
+ * only SC uses signal_all; no others should invoke it.
+ *
+ * idea for handling signal_all is:
+ *   first awaken any and all waiting processes
+ *   (m_wait and ?m_signal_all arm once for each waiting process).
+ *   then grab the signal_all (m_signal_all arm once).
+ *
+ * (could use forward instead of some sends below...)
+ *
+ * code takes advantage of fact that order of invocations
+ * of m_wait_ranks does not matter since always access "by rank"
+ * except when just scanning list.
+ *
+ * for printing, as print each, copy it to order operation; then copy back
+ * order of m_wait_ranks changed, but that does not
+ * matter since always grab using by rank.
+ * (instead of copying back, could use an array and swap "current" index.)
+ */
 
 public class m_condvar {
     public op void m_wait(cap void (), int);

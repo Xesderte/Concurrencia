@@ -1,0 +1,61 @@
+
+import edu.ucdavis.jr.JR;
+public class pizzeria {
+    private static int n; 
+
+    private static Monitor m = new Monitor("Monitor Pizzas"); //The monitor
+
+    private static process Chef{
+        while(true){
+            n= ((int)(Math.random()*3)+1);
+            m.terminarPizza(n);
+            delay(1000);
+        }
+    }
+
+    private static process Ayudante1{
+        while(true){
+            System.out.println("Ayudante queso listo");
+            m.colocarQueso();
+            delay(1000);
+        }
+    }
+    
+    private static process Ayudante2{
+        while(true){
+            System.out.println("Ayudante morron listo");
+            m.colocarMorron();
+            delay(1000);
+        }
+    }
+
+    private static process Ayudante3{
+        while(true){
+            System.out.println("Ayudante salsa listo");
+            m.colocarSalsa();
+            delay(1000);
+        }
+    }
+
+    private static op void delay(int tiempo){  
+        try{
+                Thread.sleep(tiempo);
+        }catch(java.lang.Exception e){}
+
+    }
+
+    //Metodo principal
+    public static void main(String[] args) {
+        try {
+            JR.registerQuiescenceAction(done);     
+        } catch (edu.ucdavis.jr.QuiescenceRegistrationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Accion a ejecutar cuando terminan todos los procesos
+    private static op void done() {
+        System.out.println("fin");
+
+    }
+}
