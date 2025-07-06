@@ -1,0 +1,72 @@
+public class eje10{
+
+    static final int N = 5;
+    static int clientes_esperando = 0; 
+    static sem mutex = 1 ;
+
+    static sem Dormir = 0; 
+    static sem barberoListoParaCortar = 0;
+    static sem clienteEnSillon = 0;
+    static sem barberoListoParaCobrar = 0;
+    static sem clientePaga = 0;
+    static sem sillaEspera = 0;
+
+
+    private static process Barbero{
+        while (true) { 
+            P(mutex);
+            if(clientes_esperando==0){
+                V(mutex);
+                System.out.println("Barbero durmiendo, no hay clientes");
+                P(Dormir);  // Duermo    
+            }else V(mutex);
+
+            P(sillaEspera);
+            V(barberoListoParaCortar);  // Genero una barrera
+            P(clienteEnSillon);
+            System.out.println("Barbero cortando el pelo");
+
+            V(barberoListoParaCobrar);
+            P(clientePaga);
+
+        }   
+    }
+
+    private static process Cliente((int i=0; i<10; i++)){
+            P(mutex);
+            if(clientes_esperando<N){
+                clientes_esperando++;
+                if(clientes_esperando==1){
+                    V(Dormir);
+                }
+                V(mutex);
+                P(sillaEspera);
+
+                V(clienteEnSillon); //Barrera
+                P(barberoListoParaCortar);
+
+                V(clientePaga);
+                P(barberoListoParaCobrar);
+
+                P(mutex);
+                clientes_esperando--;
+            }          
+            V(mutex);   
+    }
+
+    //Metodo principal
+    public static void main(String[] args) {
+        try {
+            JR.registerQuiescenceAction(done);     
+        } catch (edu.ucdavis.jr.QuiescenceRegistrationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Accion a ejecutar cuando terminan todos los procesos
+    private static op void done() {
+        System.out.println("FIN");
+    }
+}
+
+    

@@ -1,0 +1,48 @@
+
+class Buffer {
+    final int Tamanio = 20;
+    int[] buffer = new int[Tamanio];
+    int i = 0, out = 0, cant = 0;
+  
+    void write(int valor) {
+        inBuffer() when (cant < Tamanio) { 
+            buffer[i] = valor;
+            in = (i + 1) % Tamanio; 
+            cant++;
+        }
+    }
+
+    
+    int read() {
+        outBuffer() when (cant > 0) { 
+            int valor = buffer[out];
+            out = (out + 1) % Tamanio;
+            cant--;
+            return valor;
+        }
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        Buffer buffer = new Buffer();
+
+        new process() {
+            void run() {
+                for (int i = 1; i <= 100; i++) {
+                    buffer.write(i);
+                    out("Producido: " + i);
+                }
+            }
+        };
+
+        new process() {
+            void run() {
+                for (int i = 1; i <= 100; i++) {
+                    int valor = buffer.read();
+                    out("Consumido: " + valor);
+                }
+            }
+        };
+    }
+}

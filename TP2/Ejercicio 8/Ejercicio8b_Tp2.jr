@@ -1,0 +1,87 @@
+import edu.ucdavis.jr.JR;
+
+public class Ejercicio8b_Tp2{
+   
+    static int R = 5; 
+    static int W = 10;
+
+    static sem Leer = 0;   
+    static int lector_esperando = 0; 
+    static int lectores_activos = 0;
+
+    static sem Escrbir =0;   
+    static int escritor_esperando = 0; 
+    static int escritor_activo = 0;
+
+    static sem mutex = 1;   
+
+    private static process Escritores((int i=0; i<W; i++)){
+        while (true) { 
+            P(mutex);
+            escritor_esperando++; 
+            if(lectores_activos>0 || escritor_activo>0){     
+                V(mutex);
+                P(Escrbir);   
+            }else V(mutex);
+            
+            
+            P(mutex);
+            escritor_esperando--;
+            escritor_activo++;
+            V(mutex);
+            System.out.println("Proceso "+i+" escribiendo...");
+            P(mutex);
+            escritor_activo--;
+            if(escritor_esperando>0){
+                V(Escrbir);
+            }else if (lector_esperando>0){
+                V(Leer);
+            }
+            V(mutex);
+        }   
+    } 
+
+    private static process Lectores((int i=0; i<R; i++)){
+        while(true) {
+            P(mutex);
+            if(escritor_activo>0 || escritor_esperando > 0){ 
+               lector_esperando++;
+                V(mutex);
+                P(Leer);   
+            }else V(mutex);
+
+           
+            P(mutex);
+            lector_esperando--;
+            lectores_activos++;
+            V(mutex);
+            System.out.println("Proceso "+i+" leyendo...");
+            P(mutex);
+            lectores_activos--;
+            if(lectores_activos==0 && escritor_esperando>0){  
+                V(Escrbir);
+                V(mutex);
+            }else if(lector_esperando>0){
+                V(Leer);
+            }
+        }
+    }
+
+    private static op void pausa(int tiempo){  
+        try{
+            Thread.sleep(tiempo);
+        }catch(java.lang.Exception e){}
+    }
+
+    public static void main(String[] args) {
+        try {
+            JR.registerQuiescenceAction(done);     
+        } catch (edu.ucdavis.jr.QuiescenceRegistrationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static op void done() {
+        System.out.println("FIN");
+    }
+}

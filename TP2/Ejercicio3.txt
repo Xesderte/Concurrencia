@@ -1,0 +1,20 @@
+3)   
+    a) En este caso las instrucciones Inc(x) y Dec(x) son instrucciones atómicas 
+    pero no devuelven el valor del resultado, en este caso no es posible simular 
+    correctamente el Wait ya que no podemos saber si el valor del semáforo 
+    quedó < 0 tras el decremento y por ello no se puede decidir si bloquear o no 
+    el proceso. En pocas palabras, no es posible simular el Wait sin conocer el 
+    valor final.
+
+    b) En el caso que las instrucciones además den información extra como el signo 
+    del resultado final nos permite implementar el wait y signal de la siguiente 
+    forma: 
+
+    wait(s): 
+        if DEC(s) == 1 then           // si el valor final de s < 0 
+            agregar a colaEspera el proceso actual 
+            bloquear el proceso actual 
+    signal(s): 
+        if INC(s) == 1 then           // si el valor final de s ≤ 0 
+            extraer un proceso P de colaEspera 
+            desbloquear proceso P

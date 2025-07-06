@@ -1,0 +1,45 @@
+/*Productor y un consumidor sobre un buffer simple*/
+import edu.ucdavis.jr.JR;
+public class Ejercicio3Tp3 {
+
+    static semaforoMonitor impresora = new semaforoMonitor();
+
+    private static process User1 {
+        System.out.println("Usuario 1 quiere usar la impresora...");
+        impresora.Swait();
+        System.out.println("Usuario 1 esta imprimiendo...");
+        delay(1000); // Simula impresion
+        System.out.println("Usuario 1 termino de imprimir.");
+        impresora.Ssignal();
+    }
+
+    private static process User2 {
+        System.out.println("Usuario 2 quiere usar la impresora...");
+        impresora.Swait();
+        System.out.println("Usuario 2 esta imprimiendo...");
+        delay(1000); // Simula impresion
+        System.out.println("Usuario 2 termino de imprimir.");
+        impresora.Ssignal();
+    }
+
+    private static op void delay(int tiempo) {  
+        try {
+            Thread.sleep(tiempo);
+        } catch(java.lang.Exception e) {}
+    }
+
+    //Metodo principal
+    public static void main(String[] args) {
+        try {
+            JR.registerQuiescenceAction(done);     
+        } catch (edu.ucdavis.jr.QuiescenceRegistrationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Accion a ejecutar cuando terminan todos los procesos
+    private static op void done() {
+        System.out.println("fin");
+
+    }
+}

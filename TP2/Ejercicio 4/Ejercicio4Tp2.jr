@@ -1,0 +1,44 @@
+import edu.ucdavis.jr.JR;      
+
+public class Ejercicio4Tp2{
+    private static boolean Bloqueo =false;
+
+    private static op void pausa(){ 
+        try{
+            Thread.sleep(1000);
+        }catch(java.lang.Exception e){}
+
+    }
+
+    private static op boolean TestAndSet(){   
+        boolean anterior = Bloqueo;
+        Bloqueo = true:
+        return anterior;      
+    }
+
+    private static process Proceso((int id = 0; id < 25; id++)){
+        while (true){
+            while(TestAndSet()){
+                call pausa();
+            }
+            System.out.println("proceso "+ i +" obtuvo el recurso");
+            call pausa();
+            Bloqueo = false;
+            call pausa();
+        }   
+    }
+
+    //Metodo principal
+    public static void main(String[] args) {
+        try {
+            JR.registerQuiescenceAction(done);     
+        } catch (edu.ucdavis.jr.QuiescenceRegistrationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Accion a ejecutar cuando terminan todos los procesos(NUNCA VAN A TERMINAR POR QUE TIENEN UN WHILE TRUE)
+    private static op void done() {
+        System.out.println("TODOS LOS PROCESOS TERMINADOS");
+    }
+}

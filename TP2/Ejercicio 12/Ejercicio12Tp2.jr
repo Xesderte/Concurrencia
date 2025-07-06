@@ -1,0 +1,70 @@
+import edu.ucdavis.jr.JR;
+import java.util.Random;
+
+public class Ejercicio12Tp2 {
+
+    private static boolean organismo_vulnerable  = false;
+    private static final int n = 10;
+    private static final int m = 20;
+    
+    private static sem mutex = 1;
+    private static sem blancas = 4;
+    private static sem rojas = 2;
+    private static sem recurso = n;
+
+    private static int cant_blancas = 0;
+    private static int cant_rojas = 0;
+
+    private static process OrganismoX {
+        while (true) {
+            int elemento = (int)(Math.random() * 5 + 1);
+
+            if (elemento == 3) {
+                P(mutex);
+                    organismo_vulnerable = true;
+                V(mutex);
+            }
+
+            if (organismo_vulnerable){
+                P(mutex);
+                    V(recurso); 
+                V(mutex);
+            }
+
+            if (cant_rojas == 2 & cant_blancas == 4) {
+                break;
+            }
+        }
+    }
+    
+    private static process BacteriaRoja ((int id = 0; id < n; id++)) {
+        P(rojas);
+        P(mutex);
+            cant_rojas++;
+            P(recurso);
+            System.out.println("la bacteria roja " + id + " ataco!");
+        V(mutex);
+    }
+
+    private static process BacteriaBlanca ((int id = 0; id < m; id++)) {
+        P(blancas);
+        P(mutex);
+            cant_blancas++;
+            P(recurso);
+            System.out.println("la bacteria blanca " + id + " ataco!");
+        V(mutex);
+    }
+
+    public static void main(String[] args) {
+        try {
+            JR.registerQuiescenceAction(done);
+        } catch (edu.ucdavis.jr.QuiescenceRegistrationException e) {
+            //TODO: handle exception
+        }
+    }
+
+    private static op void done(){
+        System.out.println("El organismo murio :(");
+    }
+
+}

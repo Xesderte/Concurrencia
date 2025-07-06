@@ -1,0 +1,56 @@
+import jr.*;
+
+public class Ejercicio13TP1 {
+    public static void main(String[] args) {
+        new Ejercicio13TP1().go();
+    }
+
+    void go(){
+
+        final int a = 5, b = 3, c = 10, d = 2, e = 4, f = 2;  
+        final shared int p1,p2,p3,p4,p5,p6;  
+
+        proc Process1 = new proc() {
+            public void run() {   
+            }
+        };
+
+        proc Process2 = new proc() {
+            public void run() {
+                p2 = p1+4;
+            }
+        };
+        
+        proc Process3 = new proc() {
+            public void run() {
+                p3 = c-d;
+            }
+        };
+
+        proc Process4 = new proc() {
+            public void run() {
+                p3 = e-f;
+            }
+        };
+
+        proc Process5 = new proc() {
+            public void run() {
+                p5 =(int) Math.pow(p3,p4);
+            }
+        };
+        
+        proc Process6 = new proc() {
+            public void run() {
+                p6 = p2/p5;
+            }
+        };
+
+        Process1.start();
+        Process2.start();
+        Process3.start();
+        Process4.start();
+        Process5.start();
+        Process6.start();
+    }
+
+}

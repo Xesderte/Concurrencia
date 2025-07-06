@@ -1,0 +1,83 @@
+import edu.ucdavis.jr.JR;
+
+public class Ejercicio11Tp2 {
+
+    private static final int N_PIZZAS = 10;
+
+    private static sem puedeCompletarSalsa = 0;
+    private static sem puedeCompletarQueso = 0;
+    private static sem puedeCompletarMorron = 0;
+    private static sem puedeProducir = 1;
+
+    private static int pizzasHechas = 0;
+
+    private static op void pausa(int tiempo){
+        try {
+            Thread.sleep(tiempo);
+        } catch (Exception e) {}
+    }
+
+    private static process Chef((int i = 1; i <= N_PIZZAS; i++)) {
+        int faltante = (int)(Math.random() * 3); // 0: Salsa, 1: Queso, 2: Morron
+
+        P(puedeProducir);
+
+        switch (faltante) {
+            case 0:
+                System.out.println("Chef puso Queso y Morron. Falta SALSA.");
+                V(puedeCompletarSalsa);
+                break;
+            case 1:
+                System.out.println("Chef puso Salsa y Morron. Falta QUESO.");
+                V(puedeCompletarQueso);
+                break;
+            case 2:
+                System.out.println("Chef puso Salsa y Queso. Falta MORRON.");
+                V(puedeCompletarMorron);
+                break;
+        }
+    }
+
+    private static process AyudanteSalsa {
+        while (true) {
+            P(puedeCompletarSalsa);
+            System.out.println("Ayudante con SALSA completa la pizza");
+            pizzasHechas++;
+            pausa(800);
+            V(puedeProducir);
+        }
+    }
+
+    private static process AyudanteQueso {
+        while (true) {
+            P(puedeCompletarQueso);
+            System.out.println("Ayudante con QUESO completa la pizza");
+            pizzasHechas++;
+            pausa(800);
+            V(puedeProducir);
+        }
+    }
+
+    private static process AyudanteMorron {
+        while (true) {
+            P(puedeCompletarMorron);
+            System.out.println("Ayudante con MORRON completa la pizza");
+            pizzasHechas++;
+            pausa(800);
+            V(puedeProducir);
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("Problema de la PIZZERIA (Chef + Ayudantes)");
+        TP2EJ11 sistema = new TP2EJ11();
+
+        try {
+            JR.registerQuiescenceAction(done);
+        } catch (edu.ucdavis.jr.QuiescenceRegistrationException e) {}
+    }
+
+    private static op void done() {
+        System.out.println("Total de pizzas hechas: " + pizzasHechas);
+    }
+}

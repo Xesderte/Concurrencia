@@ -1,0 +1,31 @@
+//SIMULAMOS UN MONITOR CON SEMAFOROS
+//Capacidad de 5.
+
+public class semaforoMonitor {
+
+    sem mutex = 1;         // Exclusion mutua
+    sem colaCond = 0;      // Cola para condicion
+    int esperando = 0;     // Procesos esperando
+    int recurso = 1;       // Recurso compartido
+
+    public void Swait() {
+        P(mutex);          // Entrar al monitor
+        recurso--;
+        if (recurso < 0) {
+            esperando++;
+            V(mutex);      // Salir del monitor para esperar
+            P(colaCond);   // Esperar en la cola de condicion
+        }
+        V(mutex);          // Salir del monitor si no espera
+    }
+
+    public void Ssignal() {
+        P(mutex);          // Entrar al monitor
+        recurso++;
+        if (esperando > 0) {
+            esperando--;
+            V(colaCond);   // Despertar un proceso
+        }
+        V(mutex);          // Salir del monitor
+    }
+}

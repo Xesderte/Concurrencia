@@ -1,0 +1,58 @@
+import edu.ucdavis.jr.JR;      
+import java.util.LinkedList;
+
+public class Ejercicio5c_Tp2{
+
+    static LinkedList<Integer> buffer = new LinkedList<Integer>();  
+    private static sem Consumir =0; 
+    private static sem MutexC =1;   
+    private static sem MutexP =1; 
+    private static int N = 5;   
+    private static int M = 5;  
+    
+    private static op void pausa(int tiempo){  
+        try{
+                Thread.sleep(tiempo);
+        }catch(java.lang.Exception e){}
+
+    }
+
+    private static process PProductor((int i=1; i<=N; i++)){
+        int valor=0;
+        while (true) { 
+            P(MutexP);  
+            buffer.add(valor);
+            System.out.println("Proceso "+i+" produce: " + valor);
+            valor++;
+            V(MutexP);  
+            V(Consumir);  
+            call pausa(500); 
+        }   
+    }
+
+    private static process PConsumidor((int i=1; i<=M; i++)){
+        while(true) {
+            P(Consumir);   
+            P(MutexC);      
+            int aux = buffer.removeFirst();
+            System.out.println("Consumidor "+i+" consume: " + aux);
+            V(MutexC);  
+            call pausa(500);
+        }
+    }
+
+    public static void main(String[] args) {
+
+        try {
+            JR.registerQuiescenceAction(done);     
+        } catch (edu.ucdavis.jr.QuiescenceRegistrationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static op void done() {
+        System.out.println("ESTO NUNCA VA A PASAR POR EL WHILE TRUE");
+    }
+}
+
+    
